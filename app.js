@@ -1,27 +1,20 @@
-const http  = require('http')
-const {readFileSync} = require('fs');
+const express = require('express');
+const app = express();
 
-//get all
-const homePage = readFileSync('./index.html')
+const path = require('path');
+//Quando usar o método static?
+//É recomendado o uso de classes estáticas 
+//para manter métodos não associados com um objeto específico. Elas são caracterizadas por não poderem ser herdadas, já que são seladas
+app.use(express.static('./public'))
 
-const server = http.createServer((req, res) => {
-    // console.log(req.method)
-    const url = req.url
-
-// home page
-    if (url === '/') {
-        res.writeHead(200,{'content-type':'text/html'})
-        res.write(homePage)
-        res.end()
-    } else if (url === '/about') {
-        res.writeHead(200,{'content-type':'text/html'})
-        res.write('<h1> about page</h1>')
-        res.end()
-    } else {
-        res.writeHead(404,{'content-type':'text/html'})
-        res.write('<h1> not found </h1>')
-        res.end()
-    }
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname,'./navbar/index.html'))
 })
 
-server.listen(5000) 
+app.all('*', (req,res) =>{
+    res.status(404).send('resource not found')
+})
+
+app.listen(5000, () => {
+    console.log('Server is listening on port 5000...')
+})
